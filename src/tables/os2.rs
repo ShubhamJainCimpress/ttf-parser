@@ -11,6 +11,7 @@ const Y_SUBSCRIPT_X_SIZE_OFFSET: usize = 10;
 const Y_SUPERSCRIPT_X_SIZE_OFFSET: usize = 18;
 const Y_STRIKEOUT_SIZE_OFFSET: usize = 26;
 const Y_STRIKEOUT_POSITION_OFFSET: usize = 28;
+const PANOSE_OFFSET: usize = 32;
 const UNICODE_RANGES_OFFSET: usize = 42;
 const SELECTION_OFFSET: usize = 62;
 const TYPO_ASCENDER_OFFSET: usize = 68;
@@ -489,6 +490,13 @@ impl<'a> Table<'a> {
         let n3 = s.read::<u32>().unwrap_or(0) as u128;
         let n4 = s.read::<u32>().unwrap_or(0) as u128;
         UnicodeRanges(n4 << 96 | n3 << 64 | n2 << 32 | n1)
+    }
+
+    /// Returns Unicode ranges.
+    #[inline]
+    pub fn panose(&self) -> Option<&[u8]> {
+        let mut s = Stream::new_at(self.data, PANOSE_OFFSET).unwrap();
+        s.read_bytes(10)
     }
 
     #[inline]
